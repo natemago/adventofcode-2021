@@ -10,7 +10,6 @@ def part1(depths):
     return reduce(lambda acc, curr: (curr, acc[1] + 1) if curr > acc[0] else (curr, acc[1]), depths, (depths[0], 0))[1]
 
 
-
 def part2(depths):
     count = 0
     prev = sum(depths[0:3])

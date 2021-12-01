@@ -3,4 +3,4 @@
 
 # Solutions
 
-* [Day 1 - Sonar Sweep :boat: :ankor:](day1-sonar-sweep)
+* [Day 1 - Sonar Sweep :boat: :anchor:](day1-sonar-sweep)
