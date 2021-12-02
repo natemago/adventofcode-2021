@@ -4,3 +4,4 @@
 # Solutions
 
 * [Day 1 - Sonar Sweep :boat: :anchor:](day1-sonar-sweep)
+* [Day 2 - Dive :boat: :arrow_right: :arrow_down: :arrow_lower_left:](day2-dive)
