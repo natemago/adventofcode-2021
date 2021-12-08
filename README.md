@@ -10,3 +10,5 @@
 * [Day 5 - Hydrothermal venture :volcano: :ocean: :worm:](day5-hydrothermal-venture)
 * [Day 6 - Lanternfish :fish: :tropical_fish: :blowfish:](day6-lanternfish)
 * [Day 7 - Treachery of Whales :whale: :fuelpump: :coin:](day7-treachery-of-whales)
+* [Day 8 - Seven Segment Search :pager: :abacus: :foot: :foot:](day8-seven-segment-search)
+
