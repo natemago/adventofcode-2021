@@ -12,4 +12,5 @@
 * [Day 7 - Treachery of Whales :whale: :fuelpump: :coin:](day7-treachery-of-whales)
 * [Day 8 - Seven Segment Search :pager: :abacus: :foot: :foot:](day8-seven-segment-search)
 * [Day 9 - Smoke Basin :mountain: :ocean:](day9-smoke-basin)
+* [Day 10 - Syntax Scoring :heavy_check_mark: :computer: :1st_place_medal:](day10-syntax-scoring)
 
