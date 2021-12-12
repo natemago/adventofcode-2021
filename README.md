@@ -14,3 +14,5 @@
 * [Day 9 - Smoke Basin :mountain: :ocean:](day9-smoke-basin)
 * [Day 10 - Syntax Scoring :heavy_check_mark: :computer: :1st_place_medal:](day10-syntax-scoring)
 * [Day 11 - Dumbo Octopus :elephant: :octopus: :blowfish:](day11-dumbo-octopus)
+* [Day 12 - Passage Pathing :rock: :arrow_right: :arrow_lower_left: :arrow_right_hook: :arrow_heading_down:](day12-passage-pathing)
+
