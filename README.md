@@ -13,4 +13,4 @@
 * [Day 8 - Seven Segment Search :pager: :abacus: :foot: :foot:](day8-seven-segment-search)
 * [Day 9 - Smoke Basin :mountain: :ocean:](day9-smoke-basin)
 * [Day 10 - Syntax Scoring :heavy_check_mark: :computer: :1st_place_medal:](day10-syntax-scoring)
-
+* [Day 11 - Dumbo Octopus :elephant: :octopus: :blowfish:](day11-dumbo-octopus)
