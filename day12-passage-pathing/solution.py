@@ -81,21 +81,18 @@ def part1(conns):
     start = graph.vertex('start')
     end = graph.vertex('end')
     
-    r = {'count': 0}
     def reach(v, end, path):
         if v == end:
-            # print(path + [end])
-            r['count'] += 1
-            return
+            return 1
+        count = 0
         for vn in v.outgoing():
             if vn in path:
                 if not vn.is_upper:
                     continue
-            reach(vn, end, path + [v])
-        
+            count += reach(vn, end, path + [v])
+        return count
 
-    reach(start, end, [])
-    return r['count']
+    return reach(start, end, [])
 
 
 def part2(conns):
