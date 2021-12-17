@@ -18,3 +18,4 @@
 * [Day 13 - Transparent Origami :page_with_curl: :japanese_ogre: :japanese_goblin:](day13-transparent-origami)
 * [Day 14 - Extended Polymerization :alembic: :test_tube: :dna:](day14-extended-polymerization)
 * [Day 15 - Chiton :star: :star: :shell: :snail: :star: :star:](day15-chiton)
+* [Day 16 - Packet Decoder :unlock: :computer:](day16-packet-decoder)
