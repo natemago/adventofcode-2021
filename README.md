@@ -20,3 +20,4 @@
 * [Day 15 - Chiton :star: :star: :shell: :snail: :star: :star:](day15-chiton)
 * [Day 16 - Packet Decoder :unlock: :computer:](day16-packet-decoder)
 * [Day 17 - Trick Shot :rocket: :pirate_flag: :infinity:](day17-trick-shot)
+* [Day 18 - Snailfish :snail: :fish:](day18-snailfish)
