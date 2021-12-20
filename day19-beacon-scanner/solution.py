@@ -33,46 +33,39 @@ class Scanner:
         self.id = id
         self.beacons = {}
         self.orientation = orient
-
         
         for x,y,z in beacons:
                 orientation = 0
-                # for x, y, z in permutations(beacon):
-                #     for b in [(x, y, z), (x, z, -y), (x, -y, -z), (x, -z, -y)]:
-                #         if self.beacons.get(orientation) is None:
-                #             self.beacons[orientation] = set()
-                #         self.beacons[orientation].add(b)
-                #         orientation += 1
                 for b in (
                     (x, y, z),
                     (x, z, -y),
                     (x, -y, -z),
                     (x, -z, y),
-                    
+
                     (-x, y, -z),
                     (-x, -z, -y),
                     (-x, -y, z),
                     (-x, z, y),
 
-                    (y, -x, z),
-                    (y, z, x),
-                    (y, x, -z),
-                    (y, -z, x),
-
                     (-y, x, z),
-                    (-y, z, -x),
-                    (-y, -x, -z),
-                    (-y, -z, x),
-
-                    (z, y, -x),
-                    (z, -x, -y),
-                    (z, -y, x),
+                    (-z, x, -y),
+                    (y, x, -z),
                     (z, x, y),
 
-                    (-z, y, x),
-                    (-z, x, -y),
-                    (-z, -y, -x),
+                    (y, -x, z),
                     (-z, -x, y),
+                    (-y, -x, -z),
+                    (z, -x, -y),
+
+                    (-z, y, x),
+                    (-y, -z, x),
+                    (z, -y, x),
+                    (y, z, x),
+
+                    (z, y, -x),
+                    (-y, z, -x),
+                    (-z, -y, -x),
+                    (y, -z, -x),
 
                 ):
                     if self.beacons.get(orientation) is None:
@@ -101,10 +94,6 @@ class Scanner:
     def _translate(self, orient, delta):
         return set(map(lambda b: (b[0] - delta[0], b[1] - delta[1], b[2] - delta[2]), self.get_beacons(orient)))
     
-    def overlap(self, orient, other_beacons):
-        beacons = self.get_beacons(orient)
-        return beacons.intersection(other_beacons)
-    
     def __str__(self):
         return 'S({})'.format(self.id)
     
@@ -119,223 +108,123 @@ def get_scanners(report):
         Scanner(id, beacons) for id, beacons in report
     ]
 
+'''
 
-def check(scanners):
-    s1 = scanners[0]
-    o1 = 0
+start with the first scanner
 
-    s =[(s1, o1)]
+initalize the solved with the first
 
-    checked = set()
+while there are still scanners not matched:
+    get next scanner from the unsolved
+    try to match the scanner somewhere in the list of solved
+    if there was a match:
+        put the scanner in the list of solved
+        remove it from the list of unsloved
 
-    graph = {}
+'''
 
+class Found(Exception):
+    pass
 
-    while s:
-        s1, o1 = s[0]
-        s = s[1:]
-        if (s1, o1) in checked:
-            continue
-        checked.add((s1, o1))
-        print('Looking up match for:', s1.id, o1)
-        s1_bcs = s1.get_beacons(o1)
-        matches = {}
-        for s2 in scanners:
-            if s1 == s2:
-                continue
+def part1(report):
+    
+    scanners = get_scanners(report)
+    solved = set([(scanners[0], 0)])
+    unsolved = scanners[1:]
+
+    tree = {}
+
+    while unsolved:
+        s2 = unsolved[0]
+        unsolved = unsolved[1:]
+        found = False
+        try:
             for o2 in range(24):
-                s2_bcs = s2.get_beacons(o2)
-                for b1 in s1_bcs:
-                    s1_trs = s1.translate(o1, b1)
-                    found = False
-                    for b2 in s2_bcs:
-                        s2_trs = s2.translate(o2, b2)
-                        if len(s1_trs.intersection(s2_trs)) >= 12:
-                            print(s1.id, 'overlaps with', s2.id)
-                            if not matches.get(s2):
-                                matches[s2] = []
-                            matches[s2].append(o2)
-                            found = True
+                s2_beacons = s2.get_beacons(o2)
+                for b2 in s2_beacons:
+                    s2_trans = s2.translate(o2, b2)
+                    for s1, o1 in solved:
+                        s1_beacons = s1.get_beacons(o1)
+                        for b1 in s1_beacons:
+                            s1_trans = s1.translate(o1, b1)
+                            if len(s1_trans.intersection(s2_trans)) >= 12:
+                                solved.add((s2, o2))
 
-                            edg = (s1, o1, b1)
-                            if not graph.get(edg):
-                                graph[edg] = []
-                            
-                            graph[edg].append((s2, o2, b2, (
-                                b1[0] - b2[0],
-                                b1[1] - b2[1],
-                                b1[2] - b2[2],
-                            )))
+                                offset = (
+                                    b1[0] - b2[0],
+                                    b1[1] - b2[1],
+                                    b1[2] - b2[2],
+                                )
 
-                            if len(s1_trs.intersection(s2_trs)) > 12:
-                                raise Exception('MORE THAN 12!')
+                                k1 = (s1, o1)
+                                if k1 not in tree:
+                                    tree[k1] = []
+                                tree[k1].append((s2, o2, offset))
 
-                            #break
-                    #if found:
-                    #    break
-
-        if matches:
-            print(s1.id, 'overlaps with:', matches)
-            for s2, v in matches.items():
-                for o2 in v:
-                    s.append((s2, o2))
-            
-        if not matches:
-            raise Exception('Sumtingswrong')
+                                raise Found()
+        except Found as e:
+            found = True
+        if not found:
+            unsolved.append(s2)
     
-    print('--------------')
-    for k,v in graph.items():
-        print(k, '->', v)
-    print('--------------')
-
-    print('Len', len(graph))
-
-    reconstruct(graph, scanners)
-
-def reconstruct(graph, scanners):
-    g1 = {}
-    print('++++++++++++++++++++++++++')
-    for s1, opts in graph.items():
-        if (s1[0], s1[1]) not in g1:
-            g1[(s1[0], s1[1])] = {}
-        t = {}
-        print(s1[0], s1[1])
-        for s2 in opts:
-            
-            state = (s2[0], s2[1])
-            print('    ', state)
-            if state not in t:
-                t[state] = set()
-            t[state].add(s2[3])
-            print('       ->', t)
-        for n, tr in t.items():
-            if len(tr) > 1:
-                raise Exception('NOPE!')
-            g1[(s1[0], s1[1])][n] = list(tr)[0]
-            print('>>>>>>', (s1[0], s1[1]), '[', n, ']=', list(tr), '|', tr)
-    
-    print('=====================')
-    for k,v in g1.items():
-        print(k, '=>', v)
+    # print('=========================')
+    # for k, v in tree.items():
+    #     print(k, ' => ', v)
     
 
-    target = set(scanners)
+    stack = [(scanners[0], 0, (0, 0, 0))]
 
-    start = (scanners[0], 0)
-    print('==== Starting with {} ==='.format((start[0], start[1])))
-    q = [(start, set())]
+    beacons_map = set()
 
-    seen = set()
-    came_from = {
-        start: ('<ROOT>', (0,0,0)),
-    }
-
-    while q:
-        s1, path = q[0]
-        q = q[1:]
-        print(' >> at', s1, path)
-
-        if s1 in seen:
-            print('    .seen')
-            continue
-
-        seen.add(s1)
-        
-        for nxt, offset in g1[s1].items():
-            if nxt in seen:
-                continue
-            print('    .nxt=', nxt)
-            came_from[nxt] = (s1, offset)
-            q.append((nxt, path.union({s1[0]})))
-        print('<>')
-    
-    print('===============================')
-    for k, v in came_from.items():
-        print(k, '<-', v)
-
-    def find_children(g, val):
-        for k,v in g.items():
-            print('       ...check', val, v)
-            if val == v[0]:
-                yield (k, v[1])
-    
-    print(list(find_children(came_from, '<ROOT>')))
-
-    root = list(find_children(came_from, '<ROOT>'))[0]
-    beacons_set = set()
-
-    stack = [root]
-    seen = set()
+    positions = [(0, 0, 0)]
 
     while stack:
-        print(stack)
-        sdd, offset = stack.pop()
-        scanner, orientation = sdd
-        seen.add(scanner)
+        s1, o1, offset = stack.pop()
+
         beacons = [(
             b[0] + offset[0],
             b[1] + offset[1],
             b[2] + offset[2],
-        ) for b in scanner.get_beacons(orientation)]
-        beacons_set = beacons_set.union(set(beacons))
-        print('  ..sdd=', sdd)
-        for n, ofs in find_children(came_from, sdd):
-            stack.append((n, (
-                ofs[0] + offset[0],
-                ofs[1] + offset[1],
-                ofs[2] + offset[2],
-            )))
+        ) for b in s1.get_beacons(o1)]
 
-        
-    print(beacons_set)
-    print('Len=', len(beacons_set))
-    print('Seen=', list(sorted(seen, key=lambda s: s.id)))
-    print('Scanners=', scanners)
-        
+        beacons_map = beacons_map.union(set(beacons))
+
+        if (s1, o1) not in tree:
+            continue
+        for c1, oc1, off in tree[(s1, o1)]:
+            positions.append((
+                offset[0] + off[0],
+                offset[1] + off[1],
+                offset[2] + off[2],
+            ))
+            stack.append((
+                c1,
+                oc1,
+                (
+                    offset[0] + off[0],
+                    offset[1] + off[1],
+                    offset[2] + off[2],
+                )
+            ))
+
+    return len(beacons_map), positions
 
 
+def part2(report):
+    _, positions = part1(report)
 
-def part1(report):
-    scanners = get_scanners(report)
+    distances = []
+    for i, s1 in enumerate(positions[0:-1]):
+        for s2 in positions[i+1:]:
+            distances.append(sum((
+                abs(s1[0] - s2[0]),
+                abs(s1[1] - s2[1]),
+                abs(s1[2] - s2[2]),
+            ))) 
 
-    graph = {}
-
-    for i, s1 in enumerate(scanners[0:-1]):
-        for s2 in scanners[i+1:]:
-            print('Checking {} with {}'.format(s1.id, s2.id))
-            for o1, o2 in product(range(24), range(24)):
-                beacons = s1.get_beacons(o1)
-                for b1 in beacons:
-                    s1_beacons = s1.translate(o1, b1)
-                    
-                    s2_beacons =  s2.get_beacons(o2) #s2.translate(o2, b)
-                    
-                    for b2 in s2_beacons:
-                        other_beacons = s2.translate(o2, b2)
-                        overlap = s1_beacons.intersection(other_beacons)
-                        
-                        if len(overlap) >= 12:
-                            if (s1.id, o1) not in graph:
-                                graph[(s1.id, o1)] = []
-                            graph[(s1.id, o1)].append((
-                                s2, o2, beacons.union(other_beacons), b1
-                            ))
-                            print('    .overlap of ', len(overlap), ' @ ', o1, o2)
+    return max(distances)
 
 
 
-def part1(report):
-    scanners = get_scanners(report)
-    check(scanners)
-
-
-print('Part 1:', part1(read_input('input')))
-
-
-# id, beacons = read_input('test_input')[0]
-# scanner = Scanner(id, beacons)
-
-# for i in range(24):
-#     print('-----------')
-#     for b in sorted(scanner.get_beacons(i), key=lambda n: sum((abs(k) for k in n))):
-#         print(b)
+print('Part 1:', part1(read_input('input'))[0])
+print('Part 2:', part2(read_input('input')))
