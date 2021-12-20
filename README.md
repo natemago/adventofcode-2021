@@ -22,3 +22,4 @@
 * [Day 17 - Trick Shot :rocket: :pirate_flag: :infinity:](day17-trick-shot)
 * [Day 18 - Snailfish :snail: :fish:](day18-snailfish)
 * [Day 19 - Beacon Scanner :abacus: :printer: :signal_strength:](day19-beacon-scanner)
+* [Day 20 - Trench Map :world_map: :camera_flash:](day20-trench-map)
