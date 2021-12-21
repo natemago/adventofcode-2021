@@ -23,3 +23,4 @@
 * [Day 18 - Snailfish :snail: :fish:](day18-snailfish)
 * [Day 19 - Beacon Scanner :abacus: :printer: :signal_strength:](day19-beacon-scanner)
 * [Day 20 - Trench Map :world_map: :camera_flash:](day20-trench-map)
+* [Day 21 - Dirac Dice :game_die: :atom:](day21-dirac-dice)
