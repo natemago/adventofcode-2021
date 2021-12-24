@@ -25,3 +25,4 @@
 * [Day 20 - Trench Map :world_map: :camera_flash:](day20-trench-map)
 * [Day 21 - Dirac Dice :game_die: :atom:](day21-dirac-dice)
 * [Day 22 - Reactor Reboot :radioactive: :recycle:](day22-reactor-reboot)
+* [Day 23 - Amphipod :crab: :lobster: :shrimp: :lobster: :crab:](day23-amphipod)
