@@ -1,6 +1,8 @@
 # adventofcode-2021
 :christmas_tree: :santa: Advent Of Code 2021 :anchor: :ship:
 
+![OMG The key was under the sub this whole time :O](calendar.gif)
+
 # Solutions
 
 * [Day 1 - Sonar Sweep :boat: :anchor:](day1-sonar-sweep)
@@ -27,3 +29,4 @@
 * [Day 22 - Reactor Reboot :radioactive: :recycle:](day22-reactor-reboot)
 * [Day 23 - Amphipod :crab: :lobster: :shrimp: :lobster: :crab:](day23-amphipod)
 * [Day 24 - Arithmetic Logic Unit :floppy_disk: :computer: :stop_sign: :fire:](day24-arithmetic-logic-unit)
+* [Day 25 - Sea cucumber :cucumber: :star: :key: :santa: :cucumber:](day25-sea-cucumber)
