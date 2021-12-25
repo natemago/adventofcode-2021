@@ -18,7 +18,6 @@ class ALU:
     def __init__(self, instrcutions):
         self.instructions = instrcutions
         self._procedures = self.procedures()
-        self.behaviour = self.detect_procedures_behaviour()
     
     def procedures(self):
         procs = []
@@ -78,136 +77,6 @@ class ALU:
             z = state['z']
         return z
     
-    def check_for_digit(self, proc_id, d, target):
-        n = 0
-        while True:
-            res = self.exec_proc(proc_id, n, d)['z']
-            if res == target:
-                print('       .found one:', proc_id, d, target, ' => ', n)
-                break
-            n += 1
-            if n > 10_000_000:
-                return None
-        return n
-    
-    @cache
-    def check_for_procedure(self, proc_id, target):
-        results = []
-        d = 9
-        while d >= 0:
-            res = self.check_for_digit(proc_id - 1, d, target)
-            if res is None:
-                continue
-            results.append(res)
-
-            d -= 1
-        
-
-    def detect_procedure_behaviour_per_digit(self, proc_id, d):
-        detected_jump = None
-        prev = None
-        first = None
-        coeffs = []
-        for i in range(0, 1000):
-            res = self.exec_proc(proc_id, i, d)['z']
-            if i:
-                coeffs.append(res/i)
-            if prev is None:
-                prev = res
-                continue
-            if res < prev:
-                if first is None:
-                    first = i
-                else:
-                    detected_jump = i - first
-                    return ('jump', detected_jump, first)
-            prev = res
-        
-        # linear increase
-
-        coeff = sum(coeffs)/len(coeffs)
-        if not (coeff > 25 and coeff < 27):
-            print('!!!!!>>', coeff)
-            raise Exception('Not steady increase?')
-
-        return ('increase', coeff)
-
-    def detect_procedures_behaviour(self):
-        result = {}
-        for proc_id in range(14):
-            result[proc_id] = {}
-            for d in range(1, 10):
-                result[proc_id][d] = self.detect_procedure_behaviour_per_digit(proc_id, d)
-        return result
-    
-    def find_target(self, proc_id, d, target):
-        beh = self.behaviour[proc_id][d]
-        if beh[0] == 'jump':
-            _, size, start = beh
-            curr = self.exec_proc(proc_id, start, d)['z']
-            if curr == target:
-                print('exact')
-                return start
-            start += size*(target-1)
-            print((target-start)/size, 'steps')
-            while True:
-                start += size
-                res = self.exec_proc(proc_id, start, d)['z']
-                if res == target:
-                    print('found', res)
-                    return start
-                if res > target:
-                    return None
-                #print('       checking', res, '==', target)
-        elif beh[0] == 'increase':
-            _, coeff = beh
-            start = floor(target/(coeff+0.2))
-            end = ceil(target/(coeff-0.2))
-            #print('find ', target, ' between ', (start, end), 
-                # (self.exec_proc(proc_id, start, d)['z'],
-                # self.exec_proc(proc_id, end, d)['z'],
-                # ))
-            for i in range(start, end+1):
-                res = self.exec_proc(proc_id, i, d)['z']
-                if res == target:
-                    print(':::found', i)
-                    return i
-            
-            return None
-        else:
-            raise Exception('Uknown behaviour: {}'.format(beh))
-
-
-    @cache
-    def find_target_p(self, proc_id, target):
-        possible = []
-        for d in range(9, 0, -1):
-            res = self.find_target(proc_id, d, target)
-            if res is None:
-                continue
-            possible.append((res, d))
-        
-        return possible
-    
-
-
-    def check(self):
-        q = [(13, 0)]
-
-        c = 0
-        while q:
-            proc_id, target = q[0]
-            q = q[1:]
-
-            if proc_id == 0:
-                print('FOUND!')
-            
-            for tg, d in self.find_target_p(proc_id, target):
-                q.append((proc_id-1, tg))
-            c += 1
-            if c % 10 == 0:
-                print(c, proc_id, len(q))
-    
     def assert_procedure(self, proc_id, proc, tests=1000):
         passed = 0
         failed = 0
@@ -224,7 +93,9 @@ class ALU:
         print('Tests: {}. Failed: {}. Passed: {}'.format((failed+passed), failed, passed))
         return failed
 
-
+#####################################################################
+# Reverse-engineered procedures and reverse procedures from the input
+#####################################################################
 def procedure_0(z, w):
     return z * 26 + w + 14
 
@@ -442,55 +313,8 @@ def rev_procedure_13(target):
         if target%26 == (i+7):
             results[i].append(target - (target%26))
     return results
-
-
-def par1(instructions):
-    alu = ALU(instructions)
-    return alu.check()
-
-
-#print('Part 1: ', par1(read_input('input')))
-
-# def test_procedures(instrs):
-#     alu = ALU(instrs)
-
-#     # print(
-#     #     alu.detect_procedure_behaviour(13)
-#     # )
-
-#     # for p in range(14):
-#     #     print('Proc: ', p)
-#     #     print('==========')
-#     #     for d in range(1, 10):
-#     #         r = alu.detect_procedure_behaviour_per_digit(p, d)
-#     #         print('  >', d, r)
-
-#     # print(alu.find_target_p(12, 9))
-#     # alu.check()
-
-
-
-#     #alu.assert_procedure(12, procedure_12, 10_000)
-#     # for i, proc in enumerate(alu.procedures()):
-#     #     print('Procedure:', i)
-#     #     for p in proc:
-#     #         print(' '.join(p))
-
-#     for i in range(100):
-#         print('==', i)
-#         for w, pos in rev_procedure_13(i).items():
-#             #print(z, pos)
-#             for z in pos:
-#                 r = procedure_13(z, w)
-#                 print(' >', r, (z, w))
-#                 print(' >>', alu.exec_proc(13, z, w)['z'])
-
-
-# test_procedures(read_input('input'))
-# import os
-# os.exit(1)
-# # for i in range(30):
-# #     print(procedure_0(i, 9))
+########################################
+########################################
 
 procedures = [
     (procedure_0, rev_procedure_0),
@@ -540,11 +364,39 @@ def preliminary_tests(instructions, size=10_000):
 
 preliminary_tests(read_input('input'))
 
-def part1(instructions):
-    alu = ALU(instrcutions)
 
-    q = [(0, 0)]
+def solve(instructions, part2=False):
+    # Simple DFS, but with sorted order of traversal based on the digits
+    alu = ALU(instructions)
+
+    # node is (procedure, digit, target)
+    q = [(13, 0, [])]
+
+    solution = None
 
     while q:
-        proc_id, target = q.pop()
-        
+        proc_id, target, path = q.pop()
+
+        if proc_id < 0:
+            solution = path
+            break
+        proc, rev_proc = procedures[proc_id]
+
+        options = rev_proc(target)
+        keys = sorted(options.keys())
+        if part2:
+            keys = reversed(keys)
+        for ww in keys  :
+            for n_target in options[ww]:
+                q.append((
+                    proc_id - 1,
+                    n_target,
+                    [ww] + path,
+                ))
+
+    assert alu.run(solution) == 0
+    return ''.join(str(p) for p in solution)
+
+
+print('Part 1:', solve(read_input('input')))
+print('Part 2:', solve(read_input('input'), part2=True))
